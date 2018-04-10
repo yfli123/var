@@ -1,10 +1,11 @@
 package com.yfli.test.middle.gui.practice;
 
+
 import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+ 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -14,96 +15,50 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.yfli.test.middle.gui.GUIHeroTableModel;
 import com.yfli.test.middle.jdbc.JDBCHeroDAO;
 import com.yfli.test.middle.lambda.Hero;
-  
+ 
+ 
 public class GUICurd {
+    //把 htm和 table设计为静态，后面在更新表格数据的时候，就很容易访问这个两个对象
+    static GUIHeroTableModel htm = new GUIHeroTableModel();
+    static JTable t = new JTable(htm);
+    static Hero h = null;
+ 
     public static void main(String[] args) {
-  
-        JFrame f = new JFrame("LoL");
-        f.setSize(800, 600);
+ 
+        final JFrame f = new JFrame("LoL");
+        f.setSize(400, 300);
         f.setLocation(200, 200);
         f.setLayout(new BorderLayout());
  
-        //创建一个TableModel
-        GUIHeroTableModel htm= new GUIHeroTableModel();
-         
-        //根据 TableModel来创建 Table
-        JTable t = new JTable(htm);
-        
-     // 准备一个Panel上面放一个Label用于显示哪条被选中了
-        JPanel p = new JPanel();
-        final JLabel l = new JLabel("暂时未选中条目");
-        p.add(l);
-        
-        
-        
-     // 增加 一个 panel用于放置名称，血量输入框和增加 按钮
-        JPanel p1 = new JPanel();
-        
-        
-        JDialog d = new JDialog(f);
-        d.setTitle("LOL");
-        d.setSize(400, 300);
-        d.setLocation(200, 200);
-        d.setLayout(null);
-        
-        
-        final JLabel lName1 = new JLabel("名称");
-        final JTextField tfName1 = new JTextField("");
-        final JLabel lHp1 = new JLabel("血量");
-        final JTextField tfHp1 = new JTextField("");
-        tfName1.setPreferredSize(new Dimension(80, 30));
-        tfHp1.setPreferredSize(new Dimension(80, 30));
-        JButton bAdd1 = new JButton("提交");
-        bAdd1.setBounds(50, 50, 280, 30);
-        
+        t.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+ 
+        t.getSelectionModel().setSelectionInterval(0, 0);
+ 
+        JPanel pOperation = new JPanel();
  
         JButton bAdd = new JButton("增加");
         JButton bDel = new JButton("删除");
-        JButton bChange = new JButton("修改");
-        p1.add(bAdd);
-        p1.add(bDel);
-        p1.add(bChange);
- 
-        // 为增加按钮添加监听
-        bAdd.addActionListener(new ActionListener() {
-			
-            @Override
-            public void actionPerformed(ActionEvent e) {
- 
-                JDBCHeroDAO dao = new JDBCHeroDAO();
- 
-                // 根据输入框数据创建一个Hero对象
-                Hero h = new Hero();
-                JPanel p2 = new JPanel();
-                p2.add(lName1);
-                p2.add(tfName1);
-                p2.add(lHp1);
-                p2.add(tfHp1);
-                p2.add(bAdd1);
-                d.add(p2);
-                d.setVisible(true);
-                
-                // 通过dao更新tablemodel中的数据
-                htm.heros = dao.list();
-                // 调用JTable的updateUI，刷新界面。
-                // 刷新界面的时候，会到tablemodel中去取最新的数据
-                // 就能看到新加进去的数据了
-                t.updateUI();
-                
-                // 选中 第一行 ，因为 DAO是按照 ID倒排序查询，所以第一行就是新加入的数据
-                t.getSelectionModel().setSelectionInterval(0, 0);
-            }
-        });
-  
-        JScrollPane sp = new JScrollPane(t);
+        JButton bModify = new JButton("修改");
+        pOperation.add(bAdd);
+        pOperation.add(bDel);
+        pOperation.add(bModify);
         
-     // 使用selection监听器来监听table的哪个条目被选中
+        /*t.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});*/
+        
         t.getSelectionModel().addListSelectionListener(
                 new ListSelectionListener() {
 					
@@ -112,20 +67,230 @@ public class GUICurd {
                         // 获取哪一行被选中了
                         int row = t.getSelectedRow();
                         // 根据选中的行，到HeroTableModel中获取对应的对象
-                        Hero h = htm.heros.get(row);
-                        // 更新标签内容
-                        l.setText("当前选中的英雄是： " + h.name);
+                        h = htm.heros.get(row);
+                        JOptionPane.showMessageDialog(f, h.name);
   
                     }
                 });
+ 
+        bAdd.addActionListener(new ActionListener() {
+ 
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new AddDialog(f).setVisible(true);
+            }
+        });
         
-        //f.add(p, BorderLayout.NORTH);
+        bModify.addActionListener(new ActionListener() {
+        	 
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	// 使用selection监听器来监听table的哪个条目被选中
+                
+                new ModifyDialog(f).setVisible(true);
+            }
+        });
+        
+        
+        bDel.addActionListener(new ActionListener() {
+       	 
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	// 获取哪一行被选中了
+                int row = t.getSelectedRow();
+                if(row < 0) {
+                	JOptionPane.showMessageDialog(f, "请选中一行之后删除");
+                	return;
+                }
+                
+                int option = JOptionPane.showConfirmDialog(f, "确定要删除该条数据吗？");
+                if(JOptionPane.OK_OPTION == option) {
+                	// 根据选中的行，到HeroTableModel中获取对应的对象
+                    Hero h = htm.heros.get(row);
+                    //更新标签内容
+                    //l.setText("当前选中的英雄是： " + h.name);
+                    //JOptionPane.showMessageDialog(f, h.id);
+                    new JDBCHeroDAO().delete(h.id);
+                    updateTable();
+                }
+                
+            }
+        });
+        t.setRowSelectionInterval(0, 0);
+        t.getSelectionModel().addSelectionInterval(0, 0);
+        t.getSelectionModel().setSelectionInterval(0, 0);
+        JScrollPane sp = new JScrollPane(t);
+        
         f.add(sp, BorderLayout.CENTER);
-        f.add(p1, BorderLayout.SOUTH);
-  
+        f.add(pOperation, BorderLayout.SOUTH);
+ 
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-  
+        
         f.setVisible(true);
     }
+     
+    static class AddDialog extends JDialog{
+        JLabel lName = new JLabel("名称");
+        JLabel lHp = new JLabel("血量");
+         
+        JTextField tfName =new JTextField();
+        JTextField tfHp =new JTextField();
+         
+        JButton bSubmit =new JButton("提交");
+         
+        AddDialog(JFrame f){
+            super(f);
+            this.setModal(true);
+            int gap = 50;
+            this.setLayout(null);
+             
+            JPanel pInput= new JPanel();
+            JPanel pSubmit= new JPanel();
+             
+            pInput.setLayout(new GridLayout(2, 2,gap,gap));
+            pInput.add(lName);
+            pInput.add(tfName);
+            pInput.add(lHp);
+            pInput.add(tfHp);
+             
+            pSubmit.add(bSubmit);
+             
+            pInput.setBounds(50,20,200,100);
+            pSubmit.setBounds(0,130,300,150);
+             
+            this.add(pInput);
+            this.add(pSubmit);
+ 
+            this.setSize(300, 200);
+            this.setLocationRelativeTo(f);
+            bSubmit.addActionListener(new ActionListener(){
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                     
+                    if(checkEmpty(tfName, "名称")){
+                        if(checkNumber(tfHp, "hp")){
+                         
+                            String name = tfName.getText();
+                            int hp = Integer.parseInt(tfHp.getText());
+                             
+                            Hero h = new Hero();
+                            h.name = name;
+                            h.hp = hp;
+                             
+                            new JDBCHeroDAO().add(h);
+                             
+                            JOptionPane.showMessageDialog(f, "提交成功 ");
+                             
+                            AddDialog.this.setVisible(false);
+                            updateTable();
+                        }
+                    }
+                     
+                }
+            });
+             
+        }
+    }
+    
+    
+    static class ModifyDialog extends JDialog{
+        JLabel lName = new JLabel("名称");
+        JLabel lHp = new JLabel("血量");
+         
+        JTextField tfName =new JTextField(h.name);
+        JTextField tfHp =new JTextField(""+h.hp);
+         
+        JButton bSubmit =new JButton("提交");
+         
+        ModifyDialog(JFrame f){
+            super(f);
+            this.setModal(true);
+            int gap = 50;
+            this.setLayout(null);
+            
+            
+            JPanel pInput= new JPanel();
+            JPanel pSubmit= new JPanel();
+             
+            pInput.setLayout(new GridLayout(2, 2,gap,gap));
+            pInput.add(lName);
+            pInput.add(tfName);
+            pInput.add(lHp);
+            pInput.add(tfHp);
+             
+            pSubmit.add(bSubmit);
+            
+            
+             
+            pInput.setBounds(50,20,200,100);
+            pSubmit.setBounds(0,130,300,150);
+             
+            this.add(pInput);
+            this.add(pSubmit);
+ 
+            this.setSize(300, 200);
+            this.setLocationRelativeTo(f);
+            
+            
+            
+            bSubmit.addActionListener(new ActionListener(){
+           	 
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                	
+                    if(checkEmpty(tfName, "名称")){
+                        if(checkNumber(tfHp, "hp")){
+                            String name = tfName.getText();
+                            int hp = Integer.parseInt(tfHp.getText());
+                            h.name = name;
+                            h.hp = hp;
+                            new JDBCHeroDAO().update(h);
+                            JOptionPane.showMessageDialog(f, "提交成功 ");
+                            ModifyDialog.this.setVisible(false);
+                            updateTable();
+                        }
+                    }
+                     
+                }
+            });
+            
+            
+             
+        }
+    }
+    
+     
+    public static void updateTable(){
+        htm.heros = new JDBCHeroDAO().list();
+        t.updateUI();
+        if(!htm.heros.isEmpty())
+            t.getSelectionModel().setSelectionInterval(0, 0);
+    }
+     
+    private static boolean checkEmpty(JTextField tf, String msg) {
+        String value = tf.getText();
+        if(0==value.length()){
+            JOptionPane.showMessageDialog(null,msg + " 不能为空");
+            tf.grabFocus();
+            return false;
+        }
+        return true;
+    }
+    private static boolean checkNumber(JTextField tf, String msg) {
+        String value = tf.getText();
+        if(0==value.length()){
+            JOptionPane.showMessageDialog(null,msg + " 不能为空");
+            tf.grabFocus();
+            return false;
+        }
+        try {
+            Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null,msg + " 只能是整数");
+            tf.grabFocus();
+            return false;
+        }
+         
+        return true;
+    }
 }
-

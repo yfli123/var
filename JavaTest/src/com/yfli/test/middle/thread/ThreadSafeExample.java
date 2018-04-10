@@ -8,7 +8,7 @@ public class ThreadSafeExample {
             
         final Hero gareen = new Hero();
         gareen.name = "盖伦";
-        gareen.hp = 10000;
+        gareen.hp = 1000;
            
         System.out.printf("盖伦的初始血量是 %.0f%n", gareen.hp);
            
@@ -26,18 +26,20 @@ public class ThreadSafeExample {
         Thread[] addThreads = new Thread[n];
         Thread[] reduceThreads = new Thread[n];
            
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < 2; i++) {
             Thread t = new Thread(){
                 public void run(){
-                	synchronized (gareen) {
-                		gareen.recover();
+                	while(true) {
+	                	synchronized (gareen) {
+	                		gareen.recover();
+	                	}
+	                    try {
+	                        Thread.sleep(100);
+	                    } catch (InterruptedException e) {
+	                        // TODO Auto-generated catch block
+	                        e.printStackTrace();
+	                    }
                 	}
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
                 }
             };
             t.start();
@@ -46,25 +48,28 @@ public class ThreadSafeExample {
         }
            
         //n个线程减少盖伦的hp
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < 5; i++) {
             Thread t = new Thread(){
                 public void run(){
-                	synchronized (gareen) {
-                		gareen.hurt();
+                	while(true) {
+                		synchronized (gareen) {
+                    		gareen.hurt();
+                    	}
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
                 	}
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
+                	
                 }
             };
             t.start();
             reduceThreads[i] = t;
         }
            
-        //等待所有增加线程结束
+       /* //等待所有增加线程结束
         for (Thread t : addThreads) {
             try {
                 t.join();
@@ -81,7 +86,7 @@ public class ThreadSafeExample {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-        }
+        }*/
            
         //代码执行到这里，所有增加和减少线程都结束了
            

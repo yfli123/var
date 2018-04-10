@@ -59,14 +59,24 @@ public class Hero implements Comparable<Hero>{
     }
     
     public synchronized void recover() {
-        hp = hp + 1;
-        System.out.printf("%s 回血1点,增加血后，%s的血量是%.0f%n", name, name, hp);
-        // 通知那些等待在this对象上的线程，可以醒过来了，如第20行，等待着的减血线程，苏醒过来
-        this.notify();
+    	if(hp > 1000){
+    		try {
+				this.wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}else {
+    		hp = hp + 1;
+            System.out.printf("%s 回血1点,增加血后，%s的血量是%.0f%n", name, name, hp);
+            // 通知那些等待在this对象上的线程，可以醒过来了，如第20行，等待着的减血线程，苏醒过来
+            this.notify();
+    	}
+        
     }
  
     public synchronized void hurt() {
-        if (hp == 1) {
+        if (hp < 0) {
             try {
                 // 让占有this的减血线程，暂时释放对this的占有，并等待
                 this.wait();
@@ -74,10 +84,13 @@ public class Hero implements Comparable<Hero>{
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+        }else {
+        	hp = hp - 1;
+            System.out.printf("%s 减血1点,减少血后，%s的血量是%.0f%n", name, name, hp);
+            this.notify();
         }
  
-        hp = hp - 1;
-        System.out.printf("%s 减血1点,减少血后，%s的血量是%.0f%n", name, name, hp);
+        
     }
     
     public void attackHero(Hero h) {
