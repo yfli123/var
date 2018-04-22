@@ -11,9 +11,11 @@ import java.util.Scanner;
 public class NETRecieveThread extends Thread {
  
     private Socket s;
+    private String name;
  
-    public NETRecieveThread(Socket s) {
+    public NETRecieveThread(Socket s,String name) {
         this.s = s;
+        this.name = name;
     }
  
     public void run() {
@@ -23,7 +25,7 @@ public class NETRecieveThread extends Thread {
             DataInputStream dis = new DataInputStream(is);
             while (true) {
                 String msg = dis.readUTF();
-                System.out.println(msg);
+                System.out.println(""+msg);
             }
         } catch (IOException e) {
             // TODO Auto-generated catch block

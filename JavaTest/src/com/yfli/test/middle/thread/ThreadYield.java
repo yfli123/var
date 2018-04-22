@@ -13,7 +13,7 @@ public class ThreadYield {
   
         final Hero teemo = new Hero();
         teemo.name = "提莫";
-        teemo.hp = 30000;
+        teemo.hp = 300;
         teemo.damage = 1;
           
         final Hero bh = new Hero();
@@ -23,7 +23,7 @@ public class ThreadYield {
           
         final Hero leesin = new Hero();
         leesin.name = "盲僧";
-        leesin.hp = 45050;
+        leesin.hp = 450;
         leesin.damage = 1;
           
         Thread t1= new Thread(){
@@ -45,10 +45,23 @@ public class ThreadYield {
                 }              
             }
         };
+        
+        
+        Thread t3= new Thread(){
+            public void run(){
+                while(!leesin.isDead()){
+                    //临时暂停，使得t1可以占用CPU资源
+                     
+                    bh.attackHero(leesin);
+                }              
+            }
+        };
          
         t1.setPriority(5);
         t2.setPriority(5);
+        t3.setPriority(4);
         t1.start();
+        t2.start();
         t2.start();
           
     }

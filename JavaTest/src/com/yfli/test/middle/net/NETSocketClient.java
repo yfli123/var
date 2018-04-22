@@ -59,9 +59,9 @@ public class NETSocketClient  extends Thread {
            // while(i < 100) {
            	 //i++;
 	             //启动发送消息线程
-	             new NETSendThread(s).start();
+	             new NETSendThread(s,"client").start();
 	             //启动接受消息线程
-	             new NETRecieveThread(s).start();
+	             new NETRecieveThread(s,"client").start();
            // }
             /*System.out.println(s);
             s.close();*/

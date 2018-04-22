@@ -41,9 +41,9 @@ public class NETSocketServer extends Thread {
             // while(i < 100) {
             	 //i++;
 	             //启动发送消息线程
-	             new NETSendThread(s).start();
+	             new NETSendThread(s,"server").start();
 	             //启动接受消息线程
-	             new NETRecieveThread(s).start();
+	             new NETRecieveThread(s,"server").start();
              //}
              
              /*System.out.println("有连接过来" + s);

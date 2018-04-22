@@ -12,9 +12,9 @@ public class Client {
             Socket s = new Socket("127.0.0.1", 8888);
  
             // 启动发送消息线程
-            new NETSendThread(s).start();
+            new NETSendThread(s,"w").start();
             // 启动接受消息线程
-            new NETRecieveThread(s).start();
+            new NETRecieveThread(s,"w").start();
  
         } catch (UnknownHostException e) {
             // TODO Auto-generated catch block

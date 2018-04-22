@@ -15,9 +15,9 @@ public class Server {
             Socket s = ss.accept();
  
             //启动发送消息线程
-            new NETSendThread(s).start();
+            new NETSendThread(s,"w").start();
             //启动接受消息线程
-            new NETRecieveThread(s).start();
+            new NETRecieveThread(s,"2").start();
  
         } catch (IOException e) {
             // TODO Auto-generated catch block

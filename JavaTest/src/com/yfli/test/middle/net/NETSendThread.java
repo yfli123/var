@@ -9,9 +9,11 @@ import java.util.Scanner;
 public class NETSendThread extends Thread{
  
     private Socket s;
+    private String name;
  
-    public NETSendThread(Socket s){
+    public NETSendThread(Socket s,String name){
         this.s = s;
+        this.name = name;
     }
     public void run(){
         try {
@@ -21,7 +23,7 @@ public class NETSendThread extends Thread{
             while(true){
                 Scanner sc = new Scanner(System.in);
                 String str = sc.next();
-                dos.writeUTF(str);
+                dos.writeUTF(name+str);
             }
         } catch (IOException e) {
             // TODO Auto-generated catch block
