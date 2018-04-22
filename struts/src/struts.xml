@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+ 
+<struts>
+	<!-- 指定解码方式为UTF-8  -->
+  <constant name="struts.i18n.encoding" value="UTF-8"></constant>
+  <!-- 设置上传文件最大大小为10m  -->
+  <constant name="struts.multipart.maxSize" value="10240000"/>
+  
+  <package name="basicstruts" extends="struts-default">
+  <!-- 声明dateInterceptor  -->
+  <interceptors>
+  	<interceptor name="dateInterceptor" class="com.yfli.interceptor.DateInterceptor" />
+  </interceptors>
+ 
+ <!-- 
+ 	1. 所有的访问都回被web.xml中配置的Struts 的 Filter所拦截
+	2. 拦截之后，就进入struts的工作流程
+	3. 访问的地址是/index,根据struts按照 struts.xml中的配置，服务端跳转到index.jsp
+	4. 显示index.jsp的内容 
+   -->
+  <action name="index">
+    <result>index.jsp</result>
+  </action>
+  <!-- 
+	1. 访问路径 /showProduct
+	2. 所有访问都被struts的filter所拦截，并进入struts的工作流程
+	3. 根据配置文件struts.xml, 会执行ProductAction的show方法
+	4. 在show方法中，将实例属性product指向一个新的对象，并设置名称为iphone7
+	5. 服务端跳转到show.jsp
+	6. 在show.jsp中，访问ProductAction.getProduct() 获取实例属性product,并显示其名称iphone7 
+  -->
+  <action name="showProduct" class="com.yfli.struts.action.ProductAction" method="show">
+    <result name="show">show.jsp</result>
+  </action> 
+  <!-- 
+	1. 访问路径 /addProduct
+	2. 所有访问都被struts的filter所拦截，并进入struts的工作流程
+	3. 根据配置文件struts.xml, 会执行ProductAction的add方法
+	4. 在add方法执行之前，Struts生成一个新的product对象，并把页面传递过来的name设置在该对象上，接着把该对象通过setProduct()方法，注入ProductAction
+	5. 服务端跳转到show.jsp
+	6. 在show.jsp中，访问ProductAction.getProduct() 获取注入的product,并显示其名称 
+ -->
+  
+  <!-- <action name="addProduct" class="com.yfli.struts.action.ProductAction" method="add">
+    <result name="input">addProduct.jsp</result>
+    <result name="show">show.jsp</result>
+  </action> -->
+  
+  <action name="upload" class="com.yfli.struts.action.UploadAction" method="upload">
+    <result name="success">success.jsp</result>
+  </action>
+  
+  <!-- <action name="listProduct" class="com.yfli.struts.action.ProductAction" method="list">
+    <result name="list">list.jsp</result>
+  </action> -->
+  
+  <!-- 
+	*Product 表示所有以Product结尾的路径，都会匹配在这个Action上
+	method={1}表示第一个通配符
+	如果访问的是addProduct就会调用add方法
+	如果访问的是listProduct就会调用list方法
+	以此类推  
+	-->
+  
+  <!-- 
+ 	对ProductAction使用拦截器dateInterceptor
+	 一旦使用了自定义的拦截器，本来配置在action上的默认的拦截器就失效了。 所以需要再加上defaultStack 
+   -->
+  
+  <action name="*Product" class="com.yfli.struts.action.ProductAction" method="{1}">
+    <interceptor-ref name="dateInterceptor" />
+    <interceptor-ref name="defaultStack" />   
+    <result name="show">show.jsp</result>
+    <result name="list">list.jsp</result>
+  </action> 
+  
+  <action name="addPageProduct" class="com.yfli.struts.action.ProductAction" method="addPage">
+    <result name="addPage" type="redirect">addProduct.jsp?name=${name}</result>
+  </action>
+    
+ 
+</package>
+ 
+</struts>
