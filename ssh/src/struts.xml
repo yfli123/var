@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+ 
+<struts>
+  <constant name="struts.i18n.encoding" value="UTF-8"></constant>
+  <!-- 设置上传文件最大值 -->
+  <constant name="struts.multipart.maxSize" value="10240000"/>
+   
+  <constant name="struts.objectFactory" value="spring"/>
+   
+  <package name="basicstruts" extends="struts-default">
+  	<interceptors>   
+            <interceptor name="authorityInterceptor" class="com.how2java.tmall.interceptor.AuthInterceptor"></interceptor>
+            <interceptor name="categoryNamesBelowSearchInterceptor" class="com.how2java.tmall.interceptor.CategoryNamesBelowSearchInterceptor"></interceptor>
+            <interceptor name="cartTotalItemNumberInterceptor" class="com.how2java.tmall.interceptor.CartTotalItemNumberInterceptor"></interceptor>   
+            <!-- 拦截器栈 -->   
+            <interceptor-stack name="auth-default">   
+                <interceptor-ref name="authorityInterceptor" />   
+                <interceptor-ref name="categoryNamesBelowSearchInterceptor" />
+                <interceptor-ref name="cartTotalItemNumberInterceptor" />
+                <interceptor-ref name="defaultStack" />   
+            </interceptor-stack>   
+        </interceptors>  
+        <default-interceptor-ref name="auth-default"></default-interceptor-ref>    
+   
+  <!-- 
+		1. 访问路径/listProduct
+		2. web.xml中的过滤器会将请求交由struts进行处理
+		3. struts根据listProduct创建对应的productActionBean
+			此时productActionBean不再由Struts自己创建，而是由Spring创建
+		4. spring根据applicationContext.xml创建productActionBean对应的对象ProductAction
+		5. Spring 创建ProductAction的时候 注入Service
+		6. 创建Service的时候注入DAO
+		7. Struts 调用ProductAction的list方法
+		8. 在list方法中调用注入好的dao，访问数据库，查询结果
+		9. 跳转到list.jsp显示数据   
+	-->
+   <!-- 
+   		一旦Struts的 Action交由Spring进行管理之后，默认情况下，Action是单例的。
+   		为productActionBean增加一个属性scope="prototype" ，用于告知Spring，这个对象的管理，使用非单例模式
+		重启tomcat,不停的访问 
+   -->
+  <!-- <action name="listProduct" class="productActionBean" method="list">
+    <result name="listJsp">list.jsp</result>
+  </action> -->
+   
+</package>
+</struts>
