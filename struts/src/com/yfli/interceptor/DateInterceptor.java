@@ -11,6 +11,7 @@ public class DateInterceptor extends AbstractInterceptor {
     public String intercept(ActionInvocation invocation) throws Exception {
        ProductAction action = (ProductAction)invocation.getAction();
        action.setDate(new Date());
+       
        return invocation.invoke();
     }
 }
