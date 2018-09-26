@@ -12,9 +12,9 @@
    
   <package name="basicstruts" extends="struts-default">
   	<interceptors>   
-            <interceptor name="authorityInterceptor" class="com.how2java.tmall.interceptor.AuthInterceptor"></interceptor>
-            <interceptor name="categoryNamesBelowSearchInterceptor" class="com.how2java.tmall.interceptor.CategoryNamesBelowSearchInterceptor"></interceptor>
-            <interceptor name="cartTotalItemNumberInterceptor" class="com.how2java.tmall.interceptor.CartTotalItemNumberInterceptor"></interceptor>   
+            <interceptor name="authorityInterceptor" class="com.yfli.ssh.interceptor.AuthInterceptor"></interceptor>
+            <interceptor name="categoryNamesBelowSearchInterceptor" class="com.yfli.ssh.interceptor.CategoryNamesBelowSearchInterceptor"></interceptor>
+            <interceptor name="cartTotalItemNumberInterceptor" class="com.yfli.ssh.interceptor.CartTotalItemNumberInterceptor"></interceptor>   
             <!-- 拦截器栈 -->   
             <interceptor-stack name="auth-default">   
                 <interceptor-ref name="authorityInterceptor" />   
