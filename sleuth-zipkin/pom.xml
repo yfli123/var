@@ -3,9 +3,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.yfli</groupId>
-  <artifactId>api-gateway</artifactId>
+  <artifactId>sleuth-zipkin</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
+
+  <name>sleuth-zipkin</name>
+  <url>http://maven.apache.org</url>
 
   <parent>
         <groupId>org.springframework.boot</groupId>
@@ -31,24 +34,21 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- 引入zuul依赖 , 它依赖了spring-boot-starter-actuator/spring-boot-starter-hystrix/spring-boot-starter-ribbon-->
+        <!-- 引入zipkin-server依赖，提供server端功能 -->
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-zuul</artifactId>
+            <groupId>io.zipkin.java</groupId>
+            <artifactId>zipkin-server</artifactId>
         </dependency>
-        
-        
+        <!-- 引入zipkin-autoconfigure-ui依赖，用来提供zipkin web ui组件的功能，方便查看相关信息 -->
+        <dependency>
+            <groupId>io.zipkin.java</groupId>
+            <artifactId>zipkin-autoconfigure-ui</artifactId>
+        </dependency>
 
-		<!-- 引入eureka依赖 -->
+        <!-- 引入eureka依赖 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-eureka</artifactId>
-        </dependency>
-
-        <!-- 引入zipkin 依赖 ，提供zipkin客户端的功能 -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-zipkin</artifactId>
         </dependency>
         
         <dependency>
@@ -56,6 +56,6 @@
     		<artifactId>commons-lang</artifactId>
     		<version>2.4</version>
 		</dependency>
-
+        
     </dependencies>
 </project>
