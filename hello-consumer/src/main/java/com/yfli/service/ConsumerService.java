@@ -12,7 +12,7 @@ public class ConsumerService {
     @Autowired
     RestTemplate restTemplate;
 
-    @HystrixCommand(fallbackMethod = "errorMsg")
+    //@HystrixCommand(fallbackMethod = "errorMsg")
     public String consumer() {
         // 调用hello-service服务，注意这里用的是服务名，而不是具体的ip+port
         restTemplate.getForObject("http://hello-service/hello", String.class);

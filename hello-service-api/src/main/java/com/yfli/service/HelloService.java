@@ -9,7 +9,7 @@ import com.yfli.entity.User;
  * 为了同前面那个hello 接口区分开了，我们加了refactor前缀
  *
  */
-@RequestMapping("/refactor")
+//@RequestMapping("/hello-service")
 public interface HelloService {
 
     @RequestMapping("/hello2")
